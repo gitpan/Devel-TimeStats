@@ -27,16 +27,17 @@ no_index:
 provides:
   Devel::TimeStats:
     file: lib/Devel/TimeStats.pm
-    version: 0.01
+    version: 0.02
 requires:
   Moo: 1.002
   Text::ANSITable: 0.13
   Time::HiRes: 1.9725
   Tree::Simple: 1.18
+  Tree::Simple::Visitor::FindByUID: 0.02
   namespace::autoclean: 0.13
   perl: 5.008001
 resources:
   bugtracker: https://github.com/cafe01/Devel-TimeStats/issues
   homepage: https://github.com/cafe01/Devel-TimeStats
   repository: git://github.com/cafe01/Devel-TimeStats.git
-version: 0.01
+version: 0.02
