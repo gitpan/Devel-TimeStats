@@ -1,11 +1,12 @@
 package Devel::TimeStats;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use Moo;
 use namespace::autoclean;
 use Time::HiRes qw/gettimeofday tv_interval/;
-use Text::ANSITable;
+use Text::UnicodeTable::Simple;
+use Term::ExtendedColor qw(:all);
 use Tree::Simple qw/use_weak_refs/;
 use Tree::Simple::Visitor::FindByUID;
 
@@ -28,16 +29,15 @@ has color_map => (
     is => 'ro',
     isa => sub{ ref $_ eq 'HASH' },
     default => sub{{
-        '0.01' => 'aaaa00', 
-        '0.05' => 'FFFF00',
-        '0.1'  => 'aa0000',
-        '0.5'  => 'FF0000',
+        '0.01' => 'yellow3',
+        '0.05' => 'yellow1',
+        '0.1'  => 'red3',
+        '0.5'  => 'red1',
     }}
 );
 
 has percentage_decimal_precision => (is => 'ro', required => 1, default => sub { 0 } );
 
-has report_border_style => (is => 'ro', required => 1, default => sub { 'Default::single_ascii' } );
 
 sub profile {
     my $self = shift;
@@ -114,10 +114,9 @@ sub report {
     my $total_duration = 0;
     $total_duration += $_->getNodeValue->{elapsed} for $self->tree->getAllChildren;
 
-    my $t = Text::ANSITable->new( use_utf8 => 0, border_style => $self->report_border_style );
-    $t->border_style($self->report_border_style);    
-    $t->columns([qw/ Action Time % /]);
-    
+    my $t = Text::UnicodeTable::Simple->new(ansi_color => 1);
+    $t->set_header(qw/ Action Time % /);
+
     my @results;
     $self->traverse(
                 sub {
@@ -141,7 +140,12 @@ sub report {
                 # format %
                 my $share = sprintf "%2.".$self->percentage_decimal_precision."f%%", $r[4];
                 
-                $t->add_row([( q{ } x $r[0] ) . $r[1], defined $r[2] ? $elapsed : '??', $share], { fgcolor => $color });
+                my @rows;
+                for my $value (( q{ } x $r[0] ) . $r[1], defined $r[2] ? $elapsed : '??', $share) {
+                    push @rows, fg('bold', fg($color, $value));
+                }
+                $t->add_row(@rows);
+
                 push(@results, \@r);
                 }
             );
@@ -298,12 +302,6 @@ Default:
 
 How many decimal places for the percentage column. 
 Default C<0>.
-
-=item C<report_border_style>
-
-The border style used for the report table. 
-See L<Text::ANSITable/BORDER STYLES> for possible values.
-Default C<Default::single_ascii>.
 
 =back
 
