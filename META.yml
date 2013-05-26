@@ -27,7 +27,7 @@ no_index:
 provides:
   Devel::TimeStats:
     file: lib/Devel/TimeStats.pm
-    version: 0.03
+    version: 0.04
 requires:
   Moo: 1.002
   Term::ExtendedColor: 0.224
@@ -41,6 +41,6 @@ resources:
   bugtracker: https://github.com/cafe01/Devel-TimeStats/issues
   homepage: https://github.com/cafe01/Devel-TimeStats
   repository: git://github.com/cafe01/Devel-TimeStats.git
-version: 0.03
+version: 0.04
 x_contributors:
   - 'bayashi <bayashi@cpan.org>'
